@@ -1,473 +1,365 @@
 
 import { useState } from "react";
-import { PageLayout } from "@/components/layout/PageLayout";
+import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bell, Edit, Globe, Moon, Palette, Save, Sun, UserCog } from "lucide-react";
-import { toast } from "sonner";
-import { stages } from "@/data/mockData";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { Check, Globe, Lock, Save, Smartphone, User, UserCog } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const Settings = () => {
-  const [generalSettings, setGeneralSettings] = useState({
-    companyName: "My CRM",
-    dateFormat: "MM/DD/YYYY",
-    timeZone: "UTC-5",
-    language: "English",
-    theme: "dark",
-  });
-
-  const [notificationSettings, setNotificationSettings] = useState({
-    emailNotifications: true,
-    desktopNotifications: true,
-    leadAssignmentAlerts: true,
-    dealUpdates: true,
-    taskReminders: true,
-    weeklyReports: false,
-  });
-  
-  const [stageSettings, setStageSettings] = useState([...stages]);
-  const [editingStage, setEditingStage] = useState<string | null>(null);
-
-  const handleGeneralSettingsChange = (key: string, value: string) => {
-    setGeneralSettings(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleNotificationToggle = (key: string) => {
-    setNotificationSettings(prev => ({ ...prev, [key]: !prev[key as keyof typeof notificationSettings] }));
+  const handleSave = () => {
+    toast({
+      title: "Settings saved",
+      description: "Your settings have been saved successfully.",
+      action: (
+        <div className="h-8 w-8 bg-green-500/20 rounded-full flex items-center justify-center">
+          <Check className="h-4 w-4 text-green-500" />
+        </div>
+      ),
+    });
   };
   
-  const handleStageChange = (id: string, field: string, value: string) => {
-    setStageSettings(prev => 
-      prev.map(stage => 
-        stage.id === id ? { ...stage, [field]: value } : stage
-      )
-    );
-  };
-
-  const handleSaveSettings = () => {
-    console.log("General settings:", generalSettings);
-    console.log("Notification settings:", notificationSettings);
-    console.log("Stage settings:", stageSettings);
-    
-    toast.success("Settings saved successfully!");
-  };
-
   return (
-    <PageLayout title="Settings">
-      <div className="p-6 max-w-6xl mx-auto">
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList className="grid w-full md:w-auto grid-cols-3 md:grid-cols-5">
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="stages">Pipeline Stages</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="integrations">Integrations</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="general" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>General Settings</CardTitle>
-                <CardDescription>Configure basic application settings</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Company Name</Label>
-                    <Input 
-                      id="companyName" 
-                      value={generalSettings.companyName}
-                      onChange={(e) => handleGeneralSettingsChange("companyName", e.target.value)}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="dateFormat">Date Format</Label>
-                    <Select 
-                      value={generalSettings.dateFormat} 
-                      onValueChange={(value) => handleGeneralSettingsChange("dateFormat", value)}
-                    >
-                      <SelectTrigger id="dateFormat">
-                        <SelectValue placeholder="Select date format" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                        <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-                        <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="timeZone">Time Zone</Label>
-                    <Select 
-                      value={generalSettings.timeZone} 
-                      onValueChange={(value) => handleGeneralSettingsChange("timeZone", value)}
-                    >
-                      <SelectTrigger id="timeZone">
-                        <SelectValue placeholder="Select time zone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="UTC-12">UTC-12</SelectItem>
-                        <SelectItem value="UTC-11">UTC-11</SelectItem>
-                        <SelectItem value="UTC-10">UTC-10</SelectItem>
-                        <SelectItem value="UTC-9">UTC-9</SelectItem>
-                        <SelectItem value="UTC-8">UTC-8 (Pacific)</SelectItem>
-                        <SelectItem value="UTC-7">UTC-7 (Mountain)</SelectItem>
-                        <SelectItem value="UTC-6">UTC-6 (Central)</SelectItem>
-                        <SelectItem value="UTC-5">UTC-5 (Eastern)</SelectItem>
-                        <SelectItem value="UTC-4">UTC-4</SelectItem>
-                        <SelectItem value="UTC-3">UTC-3</SelectItem>
-                        <SelectItem value="UTC-2">UTC-2</SelectItem>
-                        <SelectItem value="UTC-1">UTC-1</SelectItem>
-                        <SelectItem value="UTC+0">UTC+0</SelectItem>
-                        <SelectItem value="UTC+1">UTC+1</SelectItem>
-                        <SelectItem value="UTC+2">UTC+2</SelectItem>
-                        <SelectItem value="UTC+3">UTC+3</SelectItem>
-                        <SelectItem value="UTC+4">UTC+4</SelectItem>
-                        <SelectItem value="UTC+5">UTC+5</SelectItem>
-                        <SelectItem value="UTC+6">UTC+6</SelectItem>
-                        <SelectItem value="UTC+7">UTC+7</SelectItem>
-                        <SelectItem value="UTC+8">UTC+8</SelectItem>
-                        <SelectItem value="UTC+9">UTC+9</SelectItem>
-                        <SelectItem value="UTC+10">UTC+10</SelectItem>
-                        <SelectItem value="UTC+11">UTC+11</SelectItem>
-                        <SelectItem value="UTC+12">UTC+12</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <Select 
-                      value={generalSettings.language} 
-                      onValueChange={(value) => handleGeneralSettingsChange("language", value)}
-                    >
-                      <SelectTrigger id="language">
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Spanish">Spanish</SelectItem>
-                        <SelectItem value="French">French</SelectItem>
-                        <SelectItem value="German">German</SelectItem>
-                        <SelectItem value="Chinese">Chinese</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+    <div className="flex-1 overflow-auto">
+      <Header title="Settings" />
+      <main className="p-6">
+        <div className="max-w-4xl mx-auto">
+          <Tabs defaultValue="general" className="animate-on-load" style={{ "--anim-delay": 0 } as React.CSSProperties}>
+            <div className="flex justify-between items-center mb-6">
+              <TabsList>
+                <TabsTrigger value="general">General</TabsTrigger>
+                <TabsTrigger value="appearance">Appearance</TabsTrigger>
+                <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                <TabsTrigger value="security">Security</TabsTrigger>
+              </TabsList>
+              
+              <Button className="bg-crm-purple-600 hover:bg-crm-purple-700" onClick={handleSave}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+            
+            <TabsContent value="general">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Personal Information</CardTitle>
+                    <CardDescription>Update your account details</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input id="name" defaultValue="John Doe" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email Address</Label>
+                        <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input id="phone" defaultValue="+1 (555) 123-4567" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="job-title">Job Title</Label>
+                        <Input id="job-title" defaultValue="Senior Sales Manager" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <div className="space-y-2">
-                  <Label>Theme</Label>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant={generalSettings.theme === "light" ? "default" : "outline"}
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => handleGeneralSettingsChange("theme", "light")}
-                      >
-                        <Sun className="h-4 w-4" />
-                        <span>Light</span>
-                      </Button>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Account Settings</CardTitle>
+                    <CardDescription>Manage your account preferences</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="language">Language</Label>
+                      <Select defaultValue="en">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="en">English</SelectItem>
+                          <SelectItem value="fr">French</SelectItem>
+                          <SelectItem value="de">German</SelectItem>
+                          <SelectItem value="es">Spanish</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant={generalSettings.theme === "dark" ? "default" : "outline"}
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => handleGeneralSettingsChange("theme", "dark")}
-                      >
-                        <Moon className="h-4 w-4" />
-                        <span>Dark</span>
-                      </Button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant={generalSettings.theme === "system" ? "default" : "outline"}
-                        size="sm"
-                        className="gap-2"
-                        onClick={() => handleGeneralSettingsChange("theme", "system")}
-                      >
-                        <Palette className="h-4 w-4" />
-                        <span>System</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex justify-end">
-                  <Button onClick={handleSaveSettings} className="bg-crm-purple-600 hover:bg-crm-purple-700">
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Changes
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="notifications" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Notification Settings</CardTitle>
-                <CardDescription>Configure when and how you receive notifications</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="emailNotifications" className="font-medium">Email Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive notifications via email
-                      </p>
-                    </div>
-                    <Switch
-                      id="emailNotifications"
-                      checked={notificationSettings.emailNotifications}
-                      onCheckedChange={() => handleNotificationToggle("emailNotifications")}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="desktopNotifications" className="font-medium">Desktop Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Show notifications on your desktop
-                      </p>
-                    </div>
-                    <Switch
-                      id="desktopNotifications"
-                      checked={notificationSettings.desktopNotifications}
-                      onCheckedChange={() => handleNotificationToggle("desktopNotifications")}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="leadAssignmentAlerts" className="font-medium">Lead Assignment Alerts</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Get notified when you're assigned a new lead
-                      </p>
-                    </div>
-                    <Switch
-                      id="leadAssignmentAlerts"
-                      checked={notificationSettings.leadAssignmentAlerts}
-                      onCheckedChange={() => handleNotificationToggle("leadAssignmentAlerts")}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="dealUpdates" className="font-medium">Deal Updates</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Get notified about changes to your deals
-                      </p>
-                    </div>
-                    <Switch
-                      id="dealUpdates"
-                      checked={notificationSettings.dealUpdates}
-                      onCheckedChange={() => handleNotificationToggle("dealUpdates")}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="taskReminders" className="font-medium">Task Reminders</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Get reminders for upcoming tasks and follow-ups
-                      </p>
-                    </div>
-                    <Switch
-                      id="taskReminders"
-                      checked={notificationSettings.taskReminders}
-                      onCheckedChange={() => handleNotificationToggle("taskReminders")}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col space-y-1">
-                      <Label htmlFor="weeklyReports" className="font-medium">Weekly Reports</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive weekly performance reports
-                      </p>
-                    </div>
-                    <Switch
-                      id="weeklyReports"
-                      checked={notificationSettings.weeklyReports}
-                      onCheckedChange={() => handleNotificationToggle("weeklyReports")}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button onClick={handleSaveSettings} className="bg-crm-purple-600 hover:bg-crm-purple-700">
-                      <Bell className="h-4 w-4 mr-2" />
-                      Save Notification Settings
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="stages" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pipeline Stage Configuration</CardTitle>
-                <CardDescription>Customize your sales pipeline stages</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4">Stage Name</th>
-                          <th className="text-left py-3 px-4">Order</th>
-                          <th className="text-left py-3 px-4">Color</th>
-                          <th className="text-right py-3 px-4">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {stageSettings.map((stage) => (
-                          <tr key={stage.id} className="border-b">
-                            <td className="py-3 px-4">
-                              {editingStage === stage.id ? (
-                                <Input
-                                  value={stage.name}
-                                  onChange={(e) => handleStageChange(stage.id, "name", e.target.value)}
-                                  className="max-w-[200px]"
-                                />
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <div 
-                                    className="w-3 h-3 rounded-full" 
-                                    style={{ backgroundColor: stage.color }}
-                                  ></div>
-                                  {stage.name}
-                                </div>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {editingStage === stage.id ? (
-                                <Input
-                                  type="number"
-                                  value={stage.order}
-                                  onChange={(e) => handleStageChange(stage.id, "order", e.target.value)}
-                                  className="max-w-[100px]"
-                                />
-                              ) : (
-                                stage.order
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {editingStage === stage.id ? (
-                                <Input
-                                  type="color"
-                                  value={stage.color}
-                                  onChange={(e) => handleStageChange(stage.id, "color", e.target.value)}
-                                  className="w-20 h-10"
-                                />
-                              ) : (
-                                <div 
-                                  className="w-6 h-6 rounded" 
-                                  style={{ backgroundColor: stage.color }}
-                                ></div>
-                              )}
-                            </td>
-                            <td className="py-3 px-4 text-right">
-                              {editingStage === stage.id ? (
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm"
-                                  onClick={() => setEditingStage(null)}
-                                >
-                                  Save
-                                </Button>
-                              ) : (
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm"
-                                  onClick={() => setEditingStage(stage.id)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <Button variant="outline">
-                      Add New Stage
-                    </Button>
                     
-                    <Button onClick={handleSaveSettings} className="bg-crm-purple-600 hover:bg-crm-purple-700">
-                      Save Pipeline Configuration
-                    </Button>
+                    <div className="space-y-2">
+                      <Label htmlFor="timezone">Timezone</Label>
+                      <Select defaultValue="america-new_york">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select timezone" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="america-new_york">America/New York (UTC-04:00)</SelectItem>
+                          <SelectItem value="america-los_angeles">America/Los Angeles (UTC-07:00)</SelectItem>
+                          <SelectItem value="europe-london">Europe/London (UTC+01:00)</SelectItem>
+                          <SelectItem value="asia-tokyo">Asia/Tokyo (UTC+09:00)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="date-format">Date Format</Label>
+                      <Select defaultValue="mdy">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date format" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="mdy">MM/DD/YYYY</SelectItem>
+                          <SelectItem value="dmy">DD/MM/YYYY</SelectItem>
+                          <SelectItem value="ymd">YYYY/MM/DD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="appearance">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Appearance</CardTitle>
+                  <CardDescription>Customize the look and feel of the application</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <Label>Theme</Label>
+                        <p className="text-sm text-muted-foreground">Select your preferred theme</p>
+                      </div>
+                      <ThemeToggle />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="users" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>Manage users and access permissions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center mb-6">
-                  <p className="text-sm text-muted-foreground">
-                    Manage who has access to your CRM and what they can do.
-                  </p>
-                  <Button>
-                    <UserCog className="h-4 w-4 mr-2" />
-                    Add User
-                  </Button>
-                </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-4">
+                    <Label>Color Scheme</Label>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="color-default"
+                          name="color-scheme"
+                          defaultChecked
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="color-default" className="cursor-pointer">Default</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="color-blue"
+                          name="color-scheme"
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="color-blue" className="cursor-pointer">Blue</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="color-green"
+                          name="color-scheme"
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="color-green" className="cursor-pointer">Green</Label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div className="space-y-4">
+                    <Label>Layout Density</Label>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="density-compact"
+                          name="layout-density"
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="density-compact" className="cursor-pointer">Compact</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="density-comfortable"
+                          name="layout-density"
+                          defaultChecked
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="density-comfortable" className="cursor-pointer">Comfortable</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          id="density-spacious"
+                          name="layout-density"
+                          className="h-4 w-4 rounded-full"
+                        />
+                        <Label htmlFor="density-spacious" className="cursor-pointer">Spacious</Label>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="notifications">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notification Preferences</CardTitle>
+                  <CardDescription>Control how you receive notifications</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-base font-medium">Email Notifications</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Manage email notification settings</p>
+                      
+                      {[
+                        { id: "new-lead", label: "New lead assigned to you" },
+                        { id: "deal-status", label: "Deal status changes" },
+                        { id: "task-reminder", label: "Task reminders" },
+                        { id: "monthly-summary", label: "Monthly performance summary" }
+                      ].map((item) => (
+                        <div key={item.id} className="flex items-center justify-between py-2">
+                          <Label htmlFor={item.id} className="cursor-pointer">{item.label}</Label>
+                          <Switch id={item.id} defaultChecked={item.id !== "monthly-summary"} />
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <h3 className="text-base font-medium">In-App Notifications</h3>
+                      <p className="text-sm text-muted-foreground mb-4">Control notifications within the application</p>
+                      
+                      {[
+                        { id: "in-app-lead", label: "New lead notifications" },
+                        { id: "in-app-message", label: "New messages" },
+                        { id: "in-app-activity", label: "Team activity" },
+                        { id: "in-app-system", label: "System notifications" }
+                      ].map((item) => (
+                        <div key={item.id} className="flex items-center justify-between py-2">
+                          <Label htmlFor={item.id} className="cursor-pointer">{item.label}</Label>
+                          <Switch id={item.id} defaultChecked />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="security">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Password</CardTitle>
+                    <CardDescription>Change your password</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="current-password">Current Password</Label>
+                      <Input id="current-password" type="password" />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="new-password">New Password</Label>
+                        <Input id="new-password" type="password" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="confirm-password">Confirm New Password</Label>
+                        <Input id="confirm-password" type="password" />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline">Update Password</Button>
+                  </CardFooter>
+                </Card>
                 
-                <p className="text-center text-muted-foreground py-12">
-                  User management settings will appear here
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="integrations" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Integrations</CardTitle>
-                <CardDescription>Connect with other tools and services</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center mb-6">
-                  <p className="text-sm text-muted-foreground">
-                    Connect your CRM with other applications to streamline your workflow.
-                  </p>
-                  <Button>
-                    <Globe className="h-4 w-4 mr-2" />
-                    Add Integration
-                  </Button>
-                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Two-Factor Authentication</CardTitle>
+                    <CardDescription>Add an extra layer of security to your account</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-base font-medium">Enable Two-Factor Authentication</h3>
+                        <p className="text-sm text-muted-foreground">Require a security code in addition to your password</p>
+                      </div>
+                      <Switch id="2fa" />
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <p className="text-center text-muted-foreground py-12">
-                  Integration settings will appear here
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </PageLayout>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Sessions</CardTitle>
+                    <CardDescription>Manage your active sessions</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { device: "Current Device", location: "New York, USA", lastActive: "Now", browser: "Chrome on Windows", icon: <Smartphone className="h-4 w-4 mr-2" /> },
+                        { device: "MacBook Pro", location: "Boston, USA", lastActive: "2 days ago", browser: "Safari on macOS", icon: <Smartphone className="h-4 w-4 mr-2" /> },
+                        { device: "iPhone 13", location: "New York, USA", lastActive: "5 days ago", browser: "Safari on iOS", icon: <Smartphone className="h-4 w-4 mr-2" /> }
+                      ].map((session, index) => (
+                        <div key={index} className="flex items-center justify-between py-3">
+                          <div className="flex items-center">
+                            {session.icon}
+                            <div>
+                              <p className="text-sm font-medium">{session.device}</p>
+                              <p className="text-xs text-muted-foreground">{session.browser} • {session.location}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="text-xs text-muted-foreground">{session.lastActive}</span>
+                            {index === 0 ? (
+                              <span className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-full">Active</span>
+                            ) : (
+                              <Button variant="outline" size="sm" className="text-xs">Log Out</Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline" className="text-destructive hover:bg-destructive/10">Log Out From All Devices</Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+    </div>
   );
 };
 

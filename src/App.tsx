@@ -11,6 +11,16 @@ import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import Prospects from "./pages/Prospects";
 import Companies from "./pages/Companies";
+import Pipeline from "./pages/Pipeline";
+import SalesReports from "./pages/SalesReports";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import SignOut from "./pages/SignOut";
+import Search from "./pages/Search";
+import AddLead from "./pages/AddLead";
+import AddProspect from "./pages/AddProspect";
+import AddCompany from "./pages/AddCompany";
+import Campaigns from "./pages/Campaigns";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +37,16 @@ const App = () => (
             <Route path="/leads" element={<Leads />} />
             <Route path="/prospects" element={<Prospects />} />
             <Route path="/companies" element={<Companies />} />
+            <Route path="/pipeline" element={<Pipeline />} />
+            <Route path="/sales-reports" element={<SalesReports />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/sign-out" element={<SignOut />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/add-lead" element={<AddLead />} />
+            <Route path="/add-prospect" element={<AddProspect />} />
+            <Route path="/add-company" element={<AddCompany />} />
+            <Route path="/campaigns" element={<Campaigns />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

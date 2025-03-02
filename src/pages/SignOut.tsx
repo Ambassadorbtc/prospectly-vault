@@ -2,34 +2,33 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 
 const SignOut = () => {
   const navigate = useNavigate();
-
+  
   useEffect(() => {
-    // Simulate sign out process
-    const signOut = async () => {
-      // Add a small delay to simulate the sign out process
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate a sign out process
+    const timer = setTimeout(() => {
+      toast({
+        title: "Signed out successfully",
+        description: "You have been signed out of your account",
+      });
       
-      // Show success toast
-      toast.success("Signed out successfully");
-      
-      // Redirect to home page
+      // Redirect to the home page after signing out
       navigate("/");
-    };
+    }, 1500);
     
-    signOut();
+    return () => clearTimeout(timer);
   }, [navigate]);
-
+  
   return (
-    <div className="flex items-center justify-center h-screen bg-background">
-      <div className="text-center">
-        <LogOut className="h-16 w-16 mx-auto mb-6 text-crm-purple-600" />
-        <h1 className="text-2xl font-bold mb-2">Signing Out...</h1>
-        <p className="text-muted-foreground">Please wait while we sign you out.</p>
+    <div className="flex-1 flex flex-col items-center justify-center">
+      <div className="animate-spin mb-6 p-6 bg-muted rounded-full">
+        <LogOut className="h-12 w-12 text-muted-foreground" />
       </div>
+      <h1 className="text-2xl font-bold mb-2">Signing Out</h1>
+      <p className="text-muted-foreground">Please wait while we securely sign you out...</p>
     </div>
   );
 };

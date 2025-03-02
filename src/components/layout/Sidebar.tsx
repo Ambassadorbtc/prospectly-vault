@@ -1,157 +1,198 @@
-
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
 import {
   BarChart3,
-  Building,
+  Building2,
   Calendar,
   ChevronLeft,
   ChevronRight,
-  CirclePlus,
-  ClipboardList,
-  Cog,
-  GitBranch,
-  Home,
-  LayoutDashboard,
+  CreditCard,
+  Gauge,
   LogOut,
-  Megaphone,
+  Menu,
+  MessageSquare,
+  PanelRight,
+  PieChart,
   Search,
   Settings,
-  User,
+  Target,
   Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useMobileDetector } from "@/hooks/use-mobile";
+import { ThemeToggle } from "../ui/ThemeToggle";
 
-interface SidebarLink {
-  title: string;
-  icon: React.ElementType;
-  path: string;
-  isActive?: boolean;
-}
-
-interface SidebarGroup {
-  title: string;
-  links: SidebarLink[];
-}
-
-export function Sidebar() {
+export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const isMobile = useMobileDetector();
-  
-  // Don't show sidebar if on mobile and collapsed
-  if (isMobile && collapsed) {
-    return null;
-  }
+  const isMobile = useIsMobile();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
 
-  const sidebarGroups: SidebarGroup[] = [
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const sidebarItems = [
     {
-      title: "Main",
-      links: [
-        { title: "Home", icon: Home, path: "/" },
-        { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-        { title: "Pipeline", icon: GitBranch, path: "/pipeline" },
-        { title: "Calendar", icon: Calendar, path: "/calendar" },
-      ],
+      path: "/dashboard",
+      icon: Gauge,
+      label: "Dashboard",
     },
     {
-      title: "CRM",
-      links: [
-        { title: "Leads", icon: User, path: "/leads" },
-        { title: "Prospects", icon: Users, path: "/prospects" },
-        { title: "Companies", icon: Building, path: "/companies" },
-        { title: "Campaigns", icon: Megaphone, path: "/campaigns" },
-        { title: "Sales Reports", icon: BarChart3, path: "/sales-reports" },
-      ],
+      path: "/leads",
+      icon: Users,
+      label: "Leads",
     },
     {
-      title: "Actions",
-      links: [
-        { title: "Add Lead", icon: CirclePlus, path: "/add-lead" },
-        { title: "Add Prospect", icon: CirclePlus, path: "/add-prospect" },
-        { title: "Add Company", icon: CirclePlus, path: "/add-company" },
-        { title: "Search", icon: Search, path: "/search" },
-      ],
+      path: "/prospects",
+      icon: Target,
+      label: "Prospects",
     },
     {
-      title: "Account",
-      links: [
-        { title: "Profile", icon: User, path: "/profile" },
-        { title: "Settings", icon: Cog, path: "/settings" },
-        { title: "Sign Out", icon: LogOut, path: "/sign-out" },
-      ],
+      path: "/companies",
+      icon: Building2,
+      label: "Companies",
+    },
+    {
+      path: "/pipeline",
+      icon: PanelRight,
+      label: "Pipeline",
+    },
+    {
+      path: "/sales-reports",
+      icon: BarChart3,
+      label: "Sales Reports",
+    },
+    {
+      path: "/campaigns",
+      icon: MessageSquare,
+      label: "Campaigns",
+    },
+    {
+      path: "/profile",
+      icon: CreditCard,
+      label: "Profile",
+    },
+    {
+      path: "/settings",
+      icon: Settings,
+      label: "Settings",
     },
   ];
 
-  return (
-    <div
-      className={cn(
-        "h-screen flex flex-col bg-muted/30 backdrop-blur-sm border-r transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
-      )}
-    >
-      <div className="p-4 flex justify-between items-center border-b">
-        {!collapsed && (
-          <div className="font-semibold text-lg">
-            <span className="text-crm-purple-600">Lead</span>
-            <span>Manager</span>
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("ml-auto", collapsed && "mx-auto")}
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <ChevronRight /> : <ChevronLeft />}
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto py-2">
-        {sidebarGroups.map((group) => (
-          <div key={group.title} className="mb-4">
-            {!collapsed && (
-              <h3 className="ml-4 mb-1 mt-3 text-xs font-medium text-muted-foreground">
-                {group.title}
-              </h3>
-            )}
-            <ul>
-              {group.links.map((link) => (
-                <li key={link.title}>
-                  <NavLink
-                    to={link.path}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:bg-muted/40 hover:text-foreground",
-                        isActive && "bg-muted/60 text-foreground font-medium",
-                        collapsed && "justify-center"
-                      )
-                    }
-                  >
-                    <link.icon className="h-5 w-5" />
-                    {!collapsed && <span>{link.title}</span>}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-
-      <div className="p-4 border-t">
+  if (isMobile) {
+    return (
+      <>
         <Button
           variant="outline"
-          size="sm"
+          className="absolute top-4 left-4 md:hidden z-50"
+          onClick={() => setMobileOpen(true)}
+        >
+          <Menu className="w-5 h-5" />
+        </Button>
+
+        <aside
           className={cn(
-            "w-full",
-            collapsed && "p-0 w-8 h-8 justify-center"
+            "fixed left-0 top-0 z-40 h-full w-72 bg-background border-r border-r-muted p-4 transition-transform md:hidden",
+            mobileOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <Settings className="h-4 w-4 mr-2" />
-          {!collapsed && <span>Settings</span>}
-        </Button>
+          <Button
+            variant="outline"
+            className="absolute top-4 right-4 md:hidden"
+            onClick={() => setMobileOpen(false)}
+          >
+            <Menu className="w-5 h-5 rotate-90" />
+          </Button>
+          <div className="pb-4">
+            <Link to="/" className="flex items-center gap-2 px-2">
+              <PieChart className="h-6 w-6" />
+              <span className="font-bold">ProspectlyVault CRM</span>
+            </Link>
+          </div>
+          <div className="space-y-1">
+            {sidebarItems.map((item) => (
+              <Link
+                to={item.path}
+                key={item.path}
+                className={cn(
+                  "group flex w-full items-center rounded-md border border-transparent px-2 py-2 text-sm font-medium hover:bg-secondary hover:text-foreground",
+                  isActive(item.path)
+                    ? "bg-secondary text-foreground"
+                    : "text-muted-foreground"
+                )}
+              >
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.label}
+              </Link>
+            ))}
+          </div>
+          <div className="absolute bottom-4 left-4 flex w-full items-center justify-between border-t border-t-muted pt-4">
+            <ThemeToggle />
+            <Link
+              to="/sign-out"
+              className="group flex items-center rounded-md border border-transparent px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Link>
+          </div>
+        </aside>
+      </>
+    );
+  }
+
+  return (
+    <aside className="hidden md:block">
+      <div
+        className={cn(
+          "group/sidebar flex h-full w-64 flex-col fixed z-[99] bg-background border-r border-r-muted shadow-sm transition-all",
+          collapsed ? "w-16" : "w-64"
+        )}
+      >
+        <div className="flex items-center gap-2 px-3 py-2">
+          <Button variant="ghost" onClick={() => setCollapsed(!collapsed)}>
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
+          <Link to="/" className="flex items-center gap-2 px-2">
+            <PieChart className="h-6 w-6" />
+            {!collapsed && <span className="font-bold">ProspectlyVault CRM</span>}
+          </Link>
+        </div>
+        <div className="space-y-1">
+          {sidebarItems.map((item) => (
+            <Link
+              to={item.path}
+              key={item.path}
+              className={cn(
+                "group flex w-full items-center rounded-md border border-transparent px-2 py-2 text-sm font-medium hover:bg-secondary hover:text-foreground",
+                isActive(item.path)
+                  ? "bg-secondary text-foreground"
+                  : "text-muted-foreground",
+                collapsed ? "justify-center" : "justify-start"
+              )}
+            >
+              <item.icon className="mr-2 h-4 w-4" />
+              {!collapsed && <span>{item.label}</span>}
+            </Link>
+          ))}
+        </div>
+        <div className="absolute bottom-4 left-4 flex w-full items-center justify-between border-t border-t-muted pt-4">
+          <ThemeToggle />
+          <Link
+            to="/sign-out"
+            className="group flex items-center rounded-md border border-transparent px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Link>
+        </div>
       </div>
-    </div>
+    </aside>
   );
-}
+};
